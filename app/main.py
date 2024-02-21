@@ -1,6 +1,7 @@
 from fastapi import FastAPI, HTTPException
 from .database import ensure_db_setup
 from . import models, responses, ops
+import sqlite3
 
 
 app = FastAPI()
@@ -9,7 +10,7 @@ ensure_db_setup()
 
 
 
-@app.post("/customers/")
+@app.post("/customers")
 async def create_customer(customer: models.Customer):
     try:
         data = ops.insert_customer(customer)
@@ -17,4 +18,21 @@ async def create_customer(customer: models.Customer):
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
     
-    
+
+
+@app.put("/update_customers/{customer_id}")
+async def update_customers(customer_id,customer: models.Customer):
+    try:
+        data = ops.update_customer(customer_id, customer)
+        return  responses.response(True, None, data= data) 
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+@app.delete("/delete_customers/{customer_id}")
+async def delete_customer(customer_id: int):
+    try:
+        data = ops.delete_customer(customer_id,)
+        return  responses.response(True, None, data= data) 
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
