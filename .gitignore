@@ -1,0 +1,4 @@
+virtualenv
+.env
+mydatabase.db
+__pycache__
