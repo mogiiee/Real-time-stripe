@@ -1,8 +1,6 @@
 from fastapi import FastAPI, HTTPException
 from .database import ensure_db_setup
 from . import models, responses, ops
-import sqlite3
-
 
 app = FastAPI()
 
