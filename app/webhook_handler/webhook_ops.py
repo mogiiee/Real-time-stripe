@@ -1,8 +1,10 @@
 import sqlite3
 
+
 def db_connection():
     """Create and return a database connection."""
     return sqlite3.connect("/app/data/database.db")
+
 
 def insert_customer(name, email, stripe_customer_id):
     """Insert a new customer into the database."""
@@ -17,7 +19,6 @@ def insert_customer(name, email, stripe_customer_id):
         # Handle error (e.g., customer already exists)
     finally:
         conn.close()
-
 
 
 def update_customer_by_stripe_id(stripe_customer_id, name, email):
