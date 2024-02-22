@@ -1,8 +1,10 @@
 import stripe
-from . import exporter
-from fastapi import HTTPException
+from . import exporter,db_operations
 import sqlite3
-from .celery_config import app
+from .celery_worker import app
+from celery import Celery
+
+
 
 
 stripe.api_key = exporter.stripe_secret_key
@@ -14,56 +16,47 @@ def db_connection():
     return sqlite3.connect('mydatabase.db')
 
 
-@app.task(name="create_stripe_customer")
-def create_stripe_customer(customer_data):
+app = Celery('tasks', broker='pyamqp://guest@localhost//')
+app.config_from_object('app.worker.celery_config')
+
+@app.task
+def create_customer_in_stripe(customer_data):
+    local_id = customer_data.pop('local_id')
     try:
-        # Create a customer in Stripe
-        stripe_customer = stripe.Customer.create(
-            name=customer_data['name'],
-            email=customer_data['email'],
-            description="Customer for {0}".format(customer_data['name']),
-        )
-        return stripe_customer
+        stripe_customer = stripe.Customer.create(**customer_data)
+        stripe_customer_id = stripe_customer['id']
+        # Update the local database with the Stripe customer ID
+        db_operations.update_local_customer_with_stripe_id(local_id, stripe_customer_id)
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        # Implement appropriate error handling/logging
+        print(f"Failed to create Stripe customer: {e}")
 
-
-
-@app.task(name="update_stripe_customer")
-def update_stripe_customer(customer_id, customer_data):
+@app.task
+def update_customer_in_stripe(customer_data):
+    stripe_customer_id = customer_data['stripe_customer_id']
     try:
-        # Fetch the corresponding Stripe customer ID from your database
-        conn = db_connection()
-        cursor = conn.cursor()
-        cursor.execute("SELECT stripe_customer_id FROM customers WHERE id = ?", (customer_id))
-        stripe_customer_id = cursor.fetchone()
-        if not stripe_customer_id:
-            raise HTTPException(status_code=404, detail="Customer not found")
+        # Remove 'stripe_customer_id' from the dict since it's not needed for the Stripe API call
+        del customer_data['stripe_customer_id']
 
         # Update the customer in Stripe
-        stripe_customer = stripe.Customer.modify(
-            stripe_customer_id[0],
-            name=customer_data['name'],
-            email=customer_data['email'],
-        )
-        conn.close()
-        return stripe_customer
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        stripe.Customer.modify(stripe_customer_id, **customer_data)
 
-@app.task(name="delete_stripe_customer")
-def delete_stripe_customer(customer_id):
+        # If you need to update the local DB with new Stripe info, do it here
+        # But since we're just updating Stripe based on local changes, it might not be necessary
+    except stripe.StripeError as e:
+        print(f"Stripe Error: {e}")
+    except Exception as e:
+        print(f"Error updating customer in Stripe: {e}")
+
+
+@app.task
+def delete_customer_in_stripe(stripe_customer_id):
     try:
-        # Fetch the corresponding Stripe customer ID from your database
-        conn = db_connection()
-        cursor = conn.cursor()
-        cursor.execute("SELECT stripe_customer_id FROM customers WHERE id = ?", (customer_id,))
-        stripe_customer_id = cursor.fetchone()
-        if not stripe_customer_id:
-            raise HTTPException(status_code=404, detail="Customer not found")
-
-        # Delete the customer in Stripe
-        stripe.Customer.delete(stripe_customer_id[0])
-        conn.close()
+        # Delete customer in Stripe
+        stripe.Customer.delete(stripe_customer_id)
+        # Optionally, remove or mark the customer as deleted in the local database
+        db_operations.remove_local_customer(stripe_customer_id)
+    except stripe.StripeError as e:
+        print(f"Stripe Error: {e}")
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        print(f"Error deleting customer: {e}")

@@ -1,10 +1,12 @@
-from kombu import Exchange, Queue
 
-broker_url = 'amqp://guest:guest@localhost:5672//'
-task_queues = (
-    Queue('default', Exchange('default'), routing_key='default'),
-    Queue('stripe_tasks', Exchange('stripe_tasks'), routing_key='stripe_tasks'),
-)
-task_default_queue = 'default'
-task_default_exchange = 'default'
-task_default_routing_key = 'default'
+
+# Celery configuration settings
+broker_url = 'pyamqp://guest@localhost//'
+result_backend = 'rpc://'
+task_serializer = 'json'
+result_serializer = 'json'
+accept_content = ['json']
+timezone = 'Europe/London'
+enable_utc = True
+imports = ('app.worker.tasks',)
+result_backend = 'db+sqlite:///results.sqlite'

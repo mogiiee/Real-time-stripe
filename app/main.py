@@ -10,11 +10,11 @@ ensure_db_setup()
 
 @app.post("/customers")
 async def create_customer(customer: models.Customer):
-    try:
-        data = ops.insert_customer(customer)
-        return  responses.response(True, None, data= data) 
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+
+    data = ops.insert_customer(customer)
+    return  responses.response(True, None, data= data) 
+
+    # raise HTTPException(status_code=400, detail=str(e))
     
 
 

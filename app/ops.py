@@ -1,7 +1,7 @@
 from . import models, responses
 import sqlite3
 from fastapi import HTTPException
-from .worker.celery_worker import create_customer_in_stripe, update_customer_in_stripe, delete_customer_in_stripe
+from .worker.tasks import create_customer_in_stripe, update_customer_in_stripe, delete_customer_in_stripe
 # from confluent_kafka import Producer
 
 
