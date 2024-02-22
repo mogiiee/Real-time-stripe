@@ -6,7 +6,7 @@ from .worker.tasks import create_customer_in_stripe, update_customer_in_stripe, 
 
 
 def insert_customer(customer: models.Customer):
-    conn = sqlite3.connect('mydatabase.db')
+    conn = sqlite3.connect('/app/data/database.db')
     cursor = conn.cursor()
     try:
         cursor.execute("INSERT INTO customers (name, email) VALUES (?, ?)", (customer.name, customer.email))
@@ -30,7 +30,7 @@ def insert_customer(customer: models.Customer):
 
 def update_customer(customer_id: int, customer: models.Customer):
     try:
-        conn = sqlite3.connect('mydatabase.db')
+        conn = sqlite3.connect('/app/data/database.db')
         cursor = conn.cursor()
 
         # Start transaction
@@ -71,7 +71,7 @@ def update_customer(customer_id: int, customer: models.Customer):
 
 def delete_customer(customer_id: int):
     try:
-        conn = sqlite3.connect('mydatabase.db')
+        conn = sqlite3.connect('/app/data/database.db')
         cursor = conn.cursor()
         
         # Fetch Stripe customer ID before attempting to delete

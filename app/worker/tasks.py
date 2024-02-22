@@ -13,7 +13,7 @@ stripe.api_key = exporter.stripe_secret_key
 # Set your secret key: remember to change this to your live secret key in production
 
 def db_connection():
-    return sqlite3.connect('mydatabase.db')
+    return sqlite3.connect('/app/data/database.db')
 
 
 app = Celery('tasks', broker='pyamqp://guest@rabbitmq//')

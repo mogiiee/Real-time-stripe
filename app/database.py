@@ -1,8 +1,7 @@
 import sqlite3
-from fastapi import HTTPException
 
 def ensure_db_setup():
-    conn = sqlite3.connect('mydatabase.db')
+    conn = sqlite3.connect('/app/data/database.db')
     cursor = conn.cursor()
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS customers (

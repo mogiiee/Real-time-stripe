@@ -1,5 +1,5 @@
 virtualenv
 .env
-mydatabase.db
 __pycache__
 results.sqlite
+data

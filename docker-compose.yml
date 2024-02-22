@@ -25,6 +25,8 @@ services:
       - rabbitmq
     networks:
       - app-network
+    volumes:
+       - ./data:/app/data
 
   celery_worker:
     build: 
@@ -37,7 +39,10 @@ services:
       - fastapi
     networks:
       - app-network
+    volumes:
+      - ./data:/app/data
 
+      
 networks:
   app-network:
     driver: bridge

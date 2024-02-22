@@ -9,7 +9,7 @@ def update_local_customer_with_stripe_id(local_id, stripe_customer_id):
     Update the local database record with the Stripe customer ID.
     """
     try:
-        conn = sqlite3.connect('mydatabase.db')
+        conn = sqlite3.connect('/app/data/database.db')
         cursor = conn.cursor()
         cursor.execute("UPDATE customers SET stripe_customer_id = ? WHERE id = ?",
                        (stripe_customer_id, local_id))
@@ -33,7 +33,7 @@ def remove_local_customer(stripe_customer_id):
     Remove or mark a customer as deleted in the local database by Stripe customer ID.
     """
     try:
-        conn = sqlite3.connect('mydatabase.db')
+        conn = sqlite3.connect('/app/data/database.db')
         cursor = conn.cursor()
         cursor.execute("DELETE FROM customers WHERE stripe_customer_id = ?", (stripe_customer_id,))
         if cursor.rowcount == 0:

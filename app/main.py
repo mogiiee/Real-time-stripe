@@ -1,20 +1,25 @@
 from fastapi import FastAPI, HTTPException
 from .database import ensure_db_setup
 from . import models, responses, ops
+from .webhook_handler import stripe_webhooks
 
 app = FastAPI()
+app.include_router(stripe_webhooks.router)
 
 ensure_db_setup()
 
+@app.get("/")
+async def greet():
+    return {"message": "Hello to the people of zenskar"}
 
 
 @app.post("/customers")
 async def create_customer(customer: models.Customer):
-
-    data = ops.insert_customer(customer)
-    return  responses.response(True, None, data= data) 
-
-    # raise HTTPException(status_code=400, detail=str(e))
+    try:
+        data = ops.insert_customer(customer)
+        return  responses.response(True, None, data= data) 
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
     
 
 
