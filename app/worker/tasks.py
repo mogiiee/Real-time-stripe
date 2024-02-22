@@ -16,7 +16,7 @@ def db_connection():
     return sqlite3.connect('mydatabase.db')
 
 
-app = Celery('tasks', broker='pyamqp://guest@localhost//')
+app = Celery('tasks', broker='pyamqp://guest@rabbitmq//')
 app.config_from_object('app.worker.celery_config')
 
 @app.task
