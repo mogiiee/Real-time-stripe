@@ -10,6 +10,8 @@ This project integrates your local customer catalog with external services like 
 - [Setting Up Ngrok for Webhooks](#setting-up-ngrok-for-webhooks)
 - [Environment Variables](#environment-variables)
 - [API Endpoints](#api-endpoints)
+- [Answers to throretical questions](#Answers-to-throretical-question-1)
+- [## Answers to throretical question 2](#Answers-to-throretical-question-2)
 
 ### Prerequisites
 
@@ -138,6 +140,47 @@ there is another .env.sample file in `app/webhook_handler/.env.sample` you can p
 - **Delete Customer**: `DELETE /customers/{customer_id}`
 - **Stripe Webhook**: `POST /webhooks/stripe`
 
+## Answers to throretical question 1
+
+How would the current setup be utilized with salesforce API. With the research I have done, this setup would work fine provided there are 3 key changes done on top of this setup.
+
+1. Salesforce does not have a customers API like stripe but it has Account> Contact where objects like customer details can be stored. Account is where business details are stored and contact is where custormers of that business is stored. Salesforce just like Stripe has a REST API to access these and perform CRUD ops on their dashboard, but it requires secondary authentication with OAuth2, which brings me to my second point.
+
+2. Authentication, now this would have to be implemented completely from scratch as an OAuth flow would be needed to make valid API requests.
+
+3. As we used Stripe's webhook, salesforce also provides a service called Salesforce outbound messages. A new end point could be made or the same one could be updated so that it calls different functions, when different services hit that endpoint. I have put the sample code above the webhook endpoint in comments [here](app/webhook_handler/stripe_webhooks.py).
+
+4. We could also implement a celery beat which hits the Salesforce API as a cron job, and syncs the local db. The functions to sync the local db wll remain the same, only another beat would have to be implemented.
+
+5. Minor changes in the the docker-compose file to make sure that this beat is running when the entire service is up.
+
+## Answers to throretical question 2
+
+Since invoicing is a completely different topic from the customers, there would need to be extentions to some of the code base. The part where both of these can be linked would be where each customer_id has some invoices(status does not matter)
+
+1. Celery workers- 
+- Similarity: Just as how i have tasks for syncing customer data (update_customer_in_stripe), I can create tasks like create_invoice_in_stripe and update_invoice_status_in_local_db.
+
+- Improvement: Implement task routing in Celery to separate customer-related tasks from invoice-related tasks, improving task management and scalability.
+
+2. Data Model Expansion
+
+- Similarity: Just as i have a customer model that includes Stripe-specific information (stripe_customer_id), i will need an invoice model that might include fields like stripe_invoice_id, amount, status, and a relationship to the customer model.
+
+3. Webhook Handling
+
+- Similarity: The existing webhook endpoint (@app.post("/webhooks/stripe")) uses payload validation and event type checking. Similar logic will apply to invoice events, identifying them through event['type'] (e.g., invoice.paid, invoice.payment_failed). This can be checked when creating the webhook on the dashboard.
+
+4. API and Authentication
+
+- Since I am using the same stripe API's there would be no issues to get the Stripe's Invoices API. New functions would have to be created to make changes to the invoice, update its status and preprocess it to get important information.
+
+
+With a few changes to the code, we can implement new functions which write the same to the local db and show all the invoice information which the stripe API is giving in a new table.
+
+
+
+
 
 ## Screenshots
 - main dashboard of all the endpoints using swagger UI. Can also use Postman if that's more up your alley.
@@ -168,5 +211,6 @@ there is another .env.sample file in `app/webhook_handler/.env.sample` you can p
 ![delete](https://cdn.discordapp.com/attachments/991052554802712586/1210505176230662164/Screenshot_2024-02-23_at_2.05.17_PM.png?ex=65eacdcc&is=65d858cc&hm=47a234f7e88c467e49b684e3437a964d32497a6ebdf5541cd27dafcc18372ed3&)
 
 - local database
+
 ![localdb](https://cdn.discordapp.com/attachments/991052554802712586/1210505292329132112/Screenshot_2024-02-23_at_2.05.45_PM.png?ex=65eacde7&is=65d858e7&hm=2e015386549695b942562a8fa1fc4517e5a42089fdb09bae9e70f4a525f54941&)
 

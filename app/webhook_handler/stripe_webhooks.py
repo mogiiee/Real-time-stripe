@@ -5,6 +5,15 @@ from . import webhook_ops, exporter
 
 router = APIRouter()
 
+# @router.post("/webhooks/{service}")
+# async def handle_webhook(service: str, request: Request):
+#     if service == "stripe":
+#         # Process Stripe webhook
+#     elif service == "salesforce":
+#         # Process Salesforce webhook
+#     else:
+#         raise HTTPException(status_code=400, detail="Unsupported service")
+    
 
 @router.post("/webhooks/stripe")
 async def stripe_webhook(request: Request):
