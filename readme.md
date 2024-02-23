@@ -19,6 +19,18 @@ This project integrates your local customer catalog with external services like 
 - Docker & Docker Compose (for Docker setup)
 - A Stripe account for testing Stripe integration
 
+**Be sure to have all the environment variable set up, All the keys and auth token for the webhook**
+
+### Tech stack
+- fastapi
+- sqlite
+- docker
+- stripe API
+- Ngrok
+- Celery (worker)
+- rabbitMQ (queue)
+
+
 ```bash
 git clone https://github.com/mogiiee/Zenskar-Task.git
 cd Zenskar-Task
