@@ -26,7 +26,7 @@ This project integrates your local customer catalog with external services like 
 - sqlite
 - docker
 - stripe API
-- Ngrok
+- Ngrok (webhook)
 - Celery (worker)
 - rabbitMQ (queue)
 
@@ -35,6 +35,12 @@ This project integrates your local customer catalog with external services like 
 git clone https://github.com/mogiiee/Zenskar-Task.git
 cd Zenskar-Task
 ```
+
+Workflow Diagram
+
+![workflow diagram](https://cdn.discordapp.com/attachments/991052554802712586/1210547286778581042/ZENSKAR_TASK.drawio.png?ex=65eaf504&is=65d88004&hm=9dc760eb277f2b95ccccd7c743d6d879237f6e7324abd67f034bda58aa1f4a13&)
+
+
 
 ## Running with Docker
 
