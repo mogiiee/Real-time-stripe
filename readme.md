@@ -4,12 +4,13 @@
 This project integrates your local customer catalog with external services like Stripe and potentially Salesforce. It uses FastAPI for the web server, Celery for asynchronous task processing, Docker for containerization, and Ngrok for local webhook testing.
 
 ## Table of Contents
-- Getting Started
-- Running with Docker
-- Running Locally
-- Setting Up Ngrok for Webhooks
-- Environment Variables
-- API Endpoints
+- [Getting Started](#getting-started)
+- [Running with Docker](#running-with-docker)
+- [Running Locally](#running-locally)
+- [Setting Up Ngrok for Webhooks](#setting-up-ngrok-for-webhooks)
+- [Environment Variables](#environment-variables)
+- [API Endpoints](#api-endpoints)
+
 ### Prerequisites
 
 - Python 3.9+
@@ -56,7 +57,9 @@ both of these scenarios are okay just wait for about 10 seconds.
 
 ## Running Locally
 
-For running the application without Docker, follow these steps. Although it is not recommended as you might face alot of errors.
+It is not recommended as you might face alot of errors. I have designed it to work with docker-compose ... you will have to change alot of paths manually. Just use docker bro
+
+![error pic](https://cdn.discordapp.com/attachments/991052554802712586/1210509656456429568/Screenshot_2024-02-23_at_2.23.03_PM.png?ex=65ead1f8&is=65d85cf8&hm=2ac3b2142eea381d6b46f35950bfb5c1554518f14ff848639fc41a46020ea988&)
 
 ### Virtual Environment Setup
 
@@ -80,7 +83,7 @@ uvicorn app.main:app --reload
 
 ### Start the Celery Worker
 
-In a new terminal session, activate the virtual environment and run:
+In a new terminal session, activate the virtual environment and run: (this is handled in the docker-compose file)
 
 ```bash
 celery -A app.worker.celery_worker worker --loglevel=info
@@ -120,6 +123,13 @@ there is another .env.sample file in `app/webhook_handler/.env.sample` you can p
 1. **API Key**: Found in your Stripe Dashboard under Developers > API keys.
 2. **Endpoint Secret**: Create a webhook endpoint in Stripe Dashboard (Developers > Webhooks) using your Ngrok URL. Use the secret provided there.
 
+
+## Issues Faced
+
+- I had to spend alot of time figuring out what the logic will be for the local id and the id mentioned in Stripe
+
+- If you see my initial commits, I tried using Kafka with a producer and consumer queue. I could not figure out how I can include it as a container and run it with docker-compose. Hence I decided to go with RabbitMQ
+
 ## API Endpoints
 
 - **Greeting to the people of Zenskar with love**: `GET /`
@@ -127,6 +137,7 @@ there is another .env.sample file in `app/webhook_handler/.env.sample` you can p
 - **Update Customer**: `PUT /customers/{customer_id}`
 - **Delete Customer**: `DELETE /customers/{customer_id}`
 - **Stripe Webhook**: `POST /webhooks/stripe`
+
 
 ## Screenshots
 - main dashboard of all the endpoints using swagger UI. Can also use Postman if that's more up your alley.
