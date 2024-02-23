@@ -2,6 +2,7 @@ amqp==5.2.0
 annotated-types==0.6.0
 anyio==4.3.0
 billiard==4.2.0
+black==24.2.0
 celery==5.3.6
 certifi==2024.2.2
 charset-normalizer==3.3.2
@@ -15,6 +16,10 @@ fastapi==0.109.2
 h11==0.14.0
 idna==3.6
 kombu==5.3.5
+mypy-extensions==1.0.0
+packaging==23.2
+pathspec==0.12.1
+platformdirs==4.2.0
 prompt-toolkit==3.0.43
 pydantic==2.6.1
 pydantic_core==2.16.2

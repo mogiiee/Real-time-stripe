@@ -21,11 +21,11 @@ def insert_customer(customer: models.Customer):
         conn.commit()
         customer_id = cursor.lastrowid
 
-        # Convert Pydantic model to dict and add local_id for reference
+        # vonvert Pydantic model to dict and adding local_id for reference
         customer_data = customer.model_dump()
         customer_data["local_id"] = customer_id
 
-        # Enqueue the task for creating a customer in Stripe
+        # queue the task for creating a customer in stripe
         create_customer_in_stripe.delay(customer_data)
 
     except sqlite3.IntegrityError:
@@ -43,7 +43,7 @@ def update_customer(customer_id: int, customer: models.Customer):
         conn = sqlite3.connect("/app/data/database.db")
         cursor = conn.cursor()
 
-        # Start transaction
+        # Start process
         conn.execute("BEGIN")
 
         # Check if customer exists and get stripe_customer_id
@@ -67,14 +67,14 @@ def update_customer(customer_id: int, customer: models.Customer):
         # Commit changes
         conn.commit()
 
-        # Prepare customer data for Stripe update
+        # Prepare customer data for strip update
         customer_data = {
             "name": customer.name,
             "email": customer.email,
             "stripe_customer_id": stripe_customer_id,
         }
 
-        # Call the Celery task to update the customer in Stripe
+        # Call the celery task to update the customer in stripe
         update_customer_in_stripe.delay(customer_data)
 
     except sqlite3.OperationalError:
@@ -85,7 +85,7 @@ def update_customer(customer_id: int, customer: models.Customer):
     finally:
         conn.close()
 
-    return {"status": "Success", "message": "Customer update in progress"}
+    return responses.response(True, None, data={ "message": "Customer update in progress"})
 
 
 def delete_customer(customer_id: int):
@@ -93,7 +93,7 @@ def delete_customer(customer_id: int):
         conn = sqlite3.connect("/app/data/database.db")
         cursor = conn.cursor()
 
-        # Fetch Stripe customer ID before attempting to delete
+        # geting stripe customer ID before attempting to delete
         cursor.execute(
             "SELECT stripe_customer_id FROM customers WHERE id = ?", (customer_id,)
         )
@@ -102,11 +102,11 @@ def delete_customer(customer_id: int):
             raise HTTPException(status_code=404, detail="Customer not found")
         stripe_customer_id = record[0]
 
-        # Attempt to delete the customer locally
+        #  delete the customer locally
         cursor.execute("DELETE FROM customers WHERE id = ?", (customer_id,))
         conn.commit()
 
-        # Enqueue the task to delete the customer in Stripe
+        # queue the task to delete the customer in Striupe
         delete_customer_in_stripe.delay(stripe_customer_id)
 
     except sqlite3.OperationalError:
@@ -117,4 +117,4 @@ def delete_customer(customer_id: int):
     finally:
         conn.close()
 
-    return {"message": "Customer deletion process initiated"}
+    return responses.response(True, None, data={"message": "Customer deletion process initiated"})

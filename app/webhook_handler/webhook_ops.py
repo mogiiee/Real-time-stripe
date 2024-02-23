@@ -16,7 +16,6 @@ def insert_customer(name, email, stripe_customer_id):
         conn.commit()
     except sqlite3.IntegrityError as e:
         print(f"Database error: {e}")
-        # Handle error (e.g., customer already exists)
     finally:
         conn.close()
 
@@ -31,7 +30,6 @@ def update_customer_by_stripe_id(stripe_customer_id, name, email):
         conn.commit()
     except sqlite3.IntegrityError as e:
         print(f"Database error: {e}")
-        # Handle error
     finally:
         conn.close()
 
@@ -46,6 +44,5 @@ def delete_customer_by_stripe_id(stripe_customer_id):
         conn.commit()
     except sqlite3.IntegrityError as e:
         print(f"Database error: {e}")
-        # Handle error
     finally:
         conn.close()
