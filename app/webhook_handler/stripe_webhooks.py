@@ -1,4 +1,3 @@
-# app/webhook_handler/stripe_webhooks.py
 
 from fastapi import APIRouter, Request, HTTPException, status
 import stripe
@@ -43,7 +42,7 @@ async def stripe_webhook(request: Request):
 
 
 def handle_customer_updated(customer):
-    """Logic to handle customer.updated events from Stripe."""
+    # Logic to handle customer.updated events from Stripe.
     stripe_customer_id = customer.get("id")
     name = customer.get("name")
     email = customer.get("email")
@@ -51,13 +50,13 @@ def handle_customer_updated(customer):
 
 
 def handle_customer_deleted(customer):
-    """Logic to handle customer.deleted events from Stripe."""
+    # Logic to handle customer.deleted events from Stripe.
     stripe_customer_id = customer.get("id")
     webhook_ops.delete_customer_by_stripe_id(stripe_customer_id)
 
 
 def handle_customer_created(customer):
-    """Logic to handle customer.deleted events from Stripe."""
+    # Logic to handle customer.deleted events from Stripe.
     stripe_customer_id = customer.get("id")
     name = customer.get("name")
     email = customer.get("email")
