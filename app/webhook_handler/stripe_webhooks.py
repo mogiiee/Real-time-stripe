@@ -1,4 +1,3 @@
-
 from fastapi import APIRouter, Request, HTTPException, status
 import stripe
 from . import webhook_ops, exporter
@@ -13,7 +12,7 @@ router = APIRouter()
 #         # Process Salesforce webhook
 #     else:
 #         raise HTTPException(status_code=400, detail="Unsupported service")
-    
+
 
 @router.post("/webhooks/stripe")
 async def stripe_webhook(request: Request):

@@ -5,6 +5,7 @@ class Customer(BaseModel):
     name: str
     email: str
 
+
 # # class CustomerModel(BaseModel):  # Using Pydantic for example
 #     name: str
 #     email: str

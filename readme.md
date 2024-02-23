@@ -11,7 +11,7 @@ This project integrates your local customer catalog with external services like 
 - [Environment Variables](#environment-variables)
 - [API Endpoints](#api-endpoints)
 - [Answers to throretical questions](#Answers-to-throretical-question-1)
-- [## Answers to throretical question 2](#Answers-to-throretical-question-2)
+- [Answers to throretical question 2](#Answers-to-throretical-question-2)
 
 ### Prerequisites
 
