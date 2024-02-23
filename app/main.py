@@ -10,8 +10,8 @@ ensure_db_setup()
 
 
 @app.get("/")
-async def greet():
-    return {"message": "Hello to the people of zenskar"}
+async def Greeting_to_the_people_of_Zenskar_with_love():
+    return responses.response(True, None, {"message": "Hello to the people of zenskar"})
 
 
 @app.post("/customers")
