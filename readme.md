@@ -1,5 +1,4 @@
 
-# Zenskar Assignment: Back End Engineer Intern
 
 This project integrates your local customer catalog with external services like Stripe and potentially Salesforce. It uses FastAPI for the web server, Celery for asynchronous task processing, Docker for containerization, and Ngrok for local webhook testing.
 
